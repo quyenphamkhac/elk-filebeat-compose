@@ -1,0 +1,26 @@
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - /var/log/ehr/*.log
+    json.keys_under_root: true
+
+# setup.ilm.enabled: false
+setup.template.settings:
+  index.number_of_shards: 1
+
+setup.kibana:
+
+processors:
+  - add_host_metadata:
+      when.not.contains.tags: forwarded
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+  - add_kubernetes_metadata: ~
+
+output.elasticsearch:
+  hosts: ["elasticsearch"]
+  username: elastic
+  password: password
+  # index: "%{[fields.log_type]}-%{[agent.version]}-%{+yyyy.MM.dd}"
+  
